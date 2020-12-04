@@ -7,31 +7,18 @@ pub fn parse_sexpr(source: &str, indent_step: &str) -> Vec<String> {
     // state machine
     for (i, c) in source.chars().enumerate() {
         // change state
-        if c == '(' {
-            in_name = false;
-            depth = depth + 1;
-        }
-        else if c == ')' {
-            in_name = false;
-        }
-        else if c == ' ' || c == '\n' || c == '\t' || c == '\r' {
-            in_name = false;
-        }
-        else {
-            in_name = true;
-        }
+        if c == '(' { depth = depth + 1; in_name = false }
+        else if c == ')' || c == ' ' || c == '\n' || c == '\t' || c == '\r'
+            { in_name = false }
+        else { in_name = true }
         // handle start/end of name
-        if in_name && !last_in_name {
-            start = i;
-        }
+        if in_name && !last_in_name { start = i }
         else if !in_name && last_in_name {
             let mut s: String = indent_step.repeat(depth - 1);
             s.push_str(&source[start..i]);
             result.push(s);
         }
-        if c == ')' {
-            depth = depth - 1;
-        }
+        if c == ')' { depth = depth - 1 }
         // save last state
         last_in_name = in_name;
     }
